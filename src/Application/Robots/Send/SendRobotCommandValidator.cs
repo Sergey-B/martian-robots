@@ -4,15 +4,28 @@ using System.Text.RegularExpressions;
 
 namespace Application.Robots.Send;
 
-public class SendRobotCommandValidator : AbstractValidator<SendRobotCommand>
+/// <summary>
+/// Validator for the <see cref="SendRobotCommand"/> to ensure incoming HTTP payload metrics 
+/// adhere strictly to the business rule constraints defined by the Mars Rover challenge specifications.
+/// </summary>
+public sealed class SendRobotCommandValidator : AbstractValidator<SendRobotCommand>
 {
+    /// <summary>
+    /// Dynamically generated string listing all valid character values extracted from the <see cref="RobotInstruction"/> enum.
+    /// </summary>
     private static readonly string AllowedCharacters = string.Concat(
         Enum.GetValues<RobotInstruction>().Select(e => (char)e));
         
+    /// <summary>
+    /// Compiled regular expression used to validate that the instructions string strictly contains allowed execution tokens.
+    /// </summary>
     private static readonly Regex InstructionsRegex = new(
         $"^[{Regex.Escape(AllowedCharacters)}]*$", 
         RegexOptions.Compiled);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SendRobotCommandValidator"/> class and registers evaluation expressions.
+    /// </summary>
     public SendRobotCommandValidator()
     {
         RuleFor(cmd => cmd.WorldId)

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Application.UnitTests.Worlds;
 
-public sealed class CreateWorldCommandCommandHandlerTests : BaseHandlerTest
+public sealed class CreateWorldCommandHandlerTests : BaseHandlerTest
 {
     private static CreateWorldCommand Command => new(Width: 5, Height: 3);
 
@@ -19,7 +19,7 @@ public sealed class CreateWorldCommandCommandHandlerTests : BaseHandlerTest
         await using TestDbContext context = CreateDbContext();
         
         var invalidCommand = new CreateWorldCommand(Width: 100, Height: 3);
-        var handler = new CreateWorldCommandCommandHandler(context);
+        var handler = new CreateWorldCommandHandler(context);
 
         // Act
         Result<Guid> result = await handler.Handle(invalidCommand, CancellationToken.None);
@@ -34,7 +34,7 @@ public sealed class CreateWorldCommandCommandHandlerTests : BaseHandlerTest
     {
         // Arrange
         await using TestDbContext context = CreateDbContext();
-        var handler = new CreateWorldCommandCommandHandler(context);
+        var handler = new CreateWorldCommandHandler(context);
 
         // Act
         Result<Guid> result = await handler.Handle(Command, CancellationToken.None);

@@ -138,37 +138,6 @@ Response (200 OK):
 
 > Now the world has a scent at position (3, 3).
 
-# Clean Architecture Template
-
-A pragmatic Clean Architecture starter for **.NET 10**. Batteries included, opinionated where it matters, and easy to extend.
-
-## What's included in the template?
-
-- **SharedKernel** project with common Domain-Driven Design abstractions.
-- **Domain** layer with sample entities and domain events.
-- **Application** layer with abstractions for:
-  - CQRS (lightweight, MediatR-free command/query handlers)
-  - Example use cases (Todos and Users)
-  - Cross-cutting concerns (logging, validation) implemented as decorators
-- **Infrastructure** layer with:
-  - JWT authentication with **refresh tokens** (with token rotation)
-  - Permission-based authorization
-  - EF Core + PostgreSQL (snake_case naming, migrations)
-  - **HybridCache** for fast, unified caching with cache invalidation
-  - Serilog structured logging
-- **Web.Api** layer with:
-  - Minimal API endpoints
-  - **Rate limiting** (configurable global + authentication policies)
-  - **OpenTelemetry** tracing and metrics (ASP.NET Core, HTTP, Npgsql, runtime)
-  - Global exception handling and `ProblemDetails`
-  - Swagger / OpenAPI with JWT support
-- **Seq** for searching and analyzing structured logs
-  - Seq is available at http://localhost:8081 by default
-- **Testing** projects
-  - Architecture testing (`ArchitectureTests`)
-  - Unit testing (`Application.UnitTests`)
-  - Integration testing with **Testcontainers** (`IntegrationTests`)
-
 ## Getting started
 
 ```bash
@@ -185,19 +154,8 @@ dotnet test MartianRobots.slnx
 
 To target .NET 8 or .NET 9 instead of .NET 10, see the notes in `Directory.Build.props`.
 
-I'm open to hearing your feedback about the template and what you'd like to see in future iterations.
+## 🏛️ Architecture Blueprint
 
-If you're ready to learn more, check out [**Pragmatic Clean Architecture**](https://www.milanjovanovic.tech/pragmatic-clean-architecture?utm_source=ca-template):
-
-- Domain-Driven Design
-- Role-based authorization
-- Permission-based authorization
-- Distributed caching with Redis
-- OpenTelemetry
-- Outbox pattern
-- API Versioning
-- Unit testing
-- Functional testing
-- Integration testing
-
-Stay awesome!
+> 🌟 **Credits:** This project is built upon the production-ready [Clean Architecture Template by Milan Jovanović](https://milanjovanovic.tech/templates/clean-architecture).
+> 
+> It provides a pragmatic and modern starter foundation for **.NET 10**. It is fully structured around **CQRS architecture** organized as **vertical slices**, opinionated where it matters, and designed from the ground up to be highly extensible for custom domain rules.

@@ -2,8 +2,15 @@ using FluentValidation;
 
 namespace Application.Worlds.Create;
 
-public class CreateWorldCommandValidator : AbstractValidator<CreateWorldCommand>
+/// <summary>
+/// Validator for the <see cref="CreateWorldCommand"/> to ensure incoming world creation payloads 
+/// strictly conform to the grid dimension limits specified in the Mars Rover challenge.
+/// </summary>
+public sealed class CreateWorldCommandValidator : AbstractValidator<CreateWorldCommand>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CreateWorldCommandValidator"/> class and registers evaluation rules.
+    /// </summary>
     public CreateWorldCommandValidator()
     {
         RuleFor(cmd => cmd.Width)
