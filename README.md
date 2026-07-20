@@ -1,3 +1,77 @@
+# Martian Robots
+
+## Assumptions
+
+- No authentication
+- No authorization
+- No rate limiting
+- Data retention policy not needed
+- Multiple robot movements sent at once
+- Pagination and soring not implemented
+
+## Example
+
+### Step 1: Create a world of size 5×3
+
+```text
+POST /api/worlds
+Content-Type: application/json
+
+{ "width": 5, "height": 3 }
+```
+
+Response (201 Created):
+
+```json
+{
+  "id": 1,
+  "width": 5,
+  "height": 3
+}
+```
+
+### Step 2: Send the first robot
+
+```text
+POST /api/worlds/1/robots
+Content-Type: application/json
+
+{ "x": 1, "y": 1, "orientation": "E", "instructions": "RFRFRFRF" }
+```
+
+Response (200 OK):
+
+```json
+{
+  "x": 1,
+  "y": 1,
+  "orientation": "E",
+  "lost": false
+}
+```
+
+### Step 3: Send the second robot
+
+```text
+POST /api/worlds/1/robots
+Content-Type: application/json
+
+{ "x": 3, "y": 2, "orientation": "N", "instructions": "FRRFLLFFRRFLL" }
+```
+
+Response (200 OK):
+
+```json
+{
+  "x": 3,
+  "y": 3,
+  "orientation": "N",
+  "lost": true
+}
+```
+
+> Now the world has a scent at position (3, 3).
+
 # Clean Architecture Template
 
 A pragmatic Clean Architecture starter for **.NET 10**. Batteries included, opinionated where it matters, and easy to extend.

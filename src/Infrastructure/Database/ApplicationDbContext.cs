@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Data;
-using Domain.Todos;
-using Domain.Users;
+using Domain.Scents;
+using Domain.Worlds;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -12,11 +12,8 @@ public sealed class ApplicationDbContext(
     IDomainEventsDispatcher domainEventsDispatcher)
     : DbContext(options), IApplicationDbContext
 {
-    public DbSet<User> Users { get; set; }
-
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
-
-    public DbSet<TodoItem> TodoItems { get; set; }
+    public DbSet<World> Worlds { get; set; }
+    public DbSet<Scent> Scents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,14 +1,13 @@
-using Domain.Todos;
-using Domain.Users;
+using Domain.Scents;
+using Domain.Worlds;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Abstractions.Data;
 
 public interface IApplicationDbContext
 {
-    DbSet<User> Users { get; }
-    DbSet<RefreshToken> RefreshTokens { get; }
-    DbSet<TodoItem> TodoItems { get; }
+    DbSet<World> Worlds { get; }
+    DbSet<Scent> Scents { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
