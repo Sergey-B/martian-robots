@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 using Shouldly;
 using Xunit;
+using Application.Worlds;
 
 namespace Application.UnitTests.Worlds;
 
@@ -22,7 +23,7 @@ public sealed class CreateWorldCommandHandlerTests : BaseHandlerTest
         var handler = new CreateWorldCommandHandler(context);
 
         // Act
-        Result<Guid> result = await handler.Handle(invalidCommand, CancellationToken.None);
+        Result<WorldResponse> result = await handler.Handle(invalidCommand, CancellationToken.None);
 
         // Assert
         result.IsFailure.ShouldBeTrue();
@@ -37,13 +38,13 @@ public sealed class CreateWorldCommandHandlerTests : BaseHandlerTest
         var handler = new CreateWorldCommandHandler(context);
 
         // Act
-        Result<Guid> result = await handler.Handle(Command, CancellationToken.None);
+        Result<WorldResponse> result = await handler.Handle(Command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldNotBe(Guid.Empty);
+        result.Value.ShouldNotBeNull();
 
-        World persistedWorld = await context.Worlds.SingleAsync(w => w.Id == result.Value);
+        World persistedWorld = await context.Worlds.SingleAsync(w => w.Id == result.Value.Id);
         persistedWorld.Width.ShouldBe(5);
         persistedWorld.Height.ShouldBe(3);
     }

@@ -1,137 +1,105 @@
-// using System.Net;
-// using System.Net.Http.Json;
-// using Application.Worlds.Get;
+using System.Net;
+using System.Net.Http.Json;
+using Application.Worlds;
+using Application.Worlds.Get;
+using Microsoft.AspNetCore.Mvc;
 
-// namespace IntegrationTests.Worlds;
+namespace IntegrationTests.Worlds;
 
-// public sealed class WorldsTests(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
-// {
-//     private const string WorldsEndpoint = "worlds";
+public sealed class WorldsTests(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+{
+    private const string WorldsEndpoint = "worlds";
 
-//     [Fact]
-//     public async Task CreateWorld_ShouldReturnCreated_WhenValidRequest()
-//     {
-//         // Arrange
-//         var command = new { Width = 5, Height = 3 };
+    [Fact]
+    public async Task CreateWorld_ShouldReturnCreated_WhenValidRequest()
+    {
+        // Arrange
+        var command = new { Width = 5, Height = 3 };
 
-//         // Act
-//         HttpResponseMessage response = await HttpClient.PostAsJsonAsync(WorldsEndpoint, command);
+        // Act
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync(WorldsEndpoint, command);
 
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.Created);
-//         response.Headers.Location.ShouldNotBeNull();
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-//         WorldResponse? world = await response.Content.ReadFromJsonAsync<WorldResponse>();
-//         world.ShouldNotBeNull();
-//         world.Id.ShouldNotBe(Guid.Empty);
-//         world.Width.ShouldBe(command.Width);
-//         world.Height.ShouldBe(command.Height);
-//     }
+        WorldResponse? world = await response.Content.ReadFromJsonAsync<WorldResponse>();
+        world.ShouldNotBeNull();
+        world.Id.ShouldNotBe(Guid.Empty);
+        world.Width.ShouldBe(command.Width);
+        world.Height.ShouldBe(command.Height);
+    }
 
-//     [Fact]
-//     public async Task CreateWorld_ShouldReturnBadRequest_WhenWidthIsNegative()
-//     {
-//         // Arrange
-//         var command = new { Width = -1, Height = 3 };
+    [Fact]
+    public async Task CreateWorld_ShouldReturnBadRequest_WhenWidthIsNegative()
+    {
+        // Arrange
+        var command = new { Width = -1, Height = 3 };
 
-//         // Act
-//         HttpResponseMessage response = await HttpClient.PostAsJsonAsync(WorldsEndpoint, command);
+        // Act
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync(WorldsEndpoint, command);
 
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-//         ProblemDetails? problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-//         problem.ShouldNotBeNull();
-//         problem.Title.ShouldContain("Validation");
-//     }
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        ValidationProblemDto? problem = await response.Content.ReadFromJsonAsync<ValidationProblemDto>();
 
-//     [Fact]
-//     public async Task CreateWorld_ShouldReturnBadRequest_WhenHeightIsGreaterThanFifty()
-//     {
-//         // Arrange
-//         var command = new { Width = 5, Height = 51 };
+        problem.ShouldNotBeNull();
+        problem.Status.ShouldBe(400);
+        problem.Title.ShouldBe("Validation.General");
 
-//         // Act
-//         HttpResponseMessage response = await HttpClient.PostAsJsonAsync(WorldsEndpoint, command);
+        problem.Errors.ShouldNotBeEmpty();
+        problem.Errors.Any(e => e.Description.Contains("Width must be between 0 and 50"))
+                  .ShouldBeTrue();
+    }
 
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-//         ProblemDetails? problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-//         problem.ShouldNotBeNull();
-//         problem.Title.ShouldContain("Validation");
-//     }
+    [Fact]
+    public async Task CreateWorld_ShouldReturnBadRequest_WhenHeightIsGreaterThanFifty()
+    {
+        // Arrange
+        var command = new { Width = 5, Height = 51 };
 
-//     [Fact]
-//     public async Task CreateWorld_ShouldReturnBadRequest_WhenBothWidthAndHeightAreInvalid()
-//     {
-//         // Arrange
-//         var command = new { Width = 100, Height = -10 };
+        // Act
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync(WorldsEndpoint, command);
 
-//         // Act
-//         HttpResponseMessage response = await HttpClient.PostAsJsonAsync(WorldsEndpoint, command);
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-//         ProblemDetails? problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-//         problem.ShouldNotBeNull();
-//         problem.Errors.ShouldNotBeNull();
-//         problem.Errors.ShouldContainKey("Width");
-//         problem.Errors.ShouldContainKey("Height");
-//     }
+        ValidationProblemDto? problem = await response.Content.ReadFromJsonAsync<ValidationProblemDto>();
+    
+        problem.ShouldNotBeNull();
+        problem.Status.ShouldBe(400);
+        problem.Title.ShouldBe("Validation.General");
+    
+        problem.Errors.ShouldNotBeEmpty();
+        problem.Errors.Any(e => e.Description.Contains("Height must be between 0 and 50"))
+                  .ShouldBeTrue();
+    }
 
-//     #region Get World
+    [Fact]
+    public async Task CreateWorld_ShouldReturnBadRequest_WhenBothWidthAndHeightAreInvalid()
+    {
+        // Arrange
+        var command = new { Width = 100, Height = -10 };
 
-//     [Fact]
-//     public async Task GetWorld_ShouldReturnWorld_WhenWorldExists()
-//     {
-//         // Arrange
-//         WorldResponse created = await CreateWorldAsync(5, 3);
+        // Act
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync(WorldsEndpoint, command);
 
-//         // Act
-//         HttpResponseMessage response = await HttpClient.GetAsync($"{WorldsEndpoint}/{created.Id}");
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        ValidationProblemDto? problem = await response.Content.ReadFromJsonAsync<ValidationProblemDto>();
+        problem.ShouldNotBeNull();
+        problem.Errors.ShouldNotBeEmpty();
 
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-//         WorldResponse? world = await response.Content.ReadFromJsonAsync<WorldResponse>();
-//         world.ShouldNotBeNull();
-//         world.Id.ShouldBe(created.Id);
-//         world.Width.ShouldBe(created.Width);
-//         world.Height.ShouldBe(created.Height);
-//     }
+        problem.Errors.Any(e => e.Description.Contains("Height must be between 0 and 50"))
+                  .ShouldBeTrue();
 
-//     [Fact]
-//     public async Task GetWorld_ShouldReturnNotFound_WhenWorldDoesNotExist()
-//     {
-//         // Arrange
-//         var nonExistentId = Guid.NewGuid();
+        problem.Errors.Any(e => e.Description.Contains("Width must be between 0 and 50"))
+                  .ShouldBeTrue();
+    }
 
-//         // Act
-//         HttpResponseMessage response = await HttpClient.GetAsync($"{WorldsEndpoint}/{nonExistentId}");
+    #region Response Models
 
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-//     }
+    private sealed record ValidationErrorDto(string Code, string Description, int Type);
+    private sealed record ValidationProblemDto(string Type, string Title, int Status, string Detail, List<ValidationErrorDto> Errors);
 
-//     #endregion
-
-//     #region Helpers
-
-//     private async Task<WorldResponse> CreateWorldAsync(int worldWidth, int worldHeight)
-//     {
-//         HttpResponseMessage createWorldResponse = await HttpClient.PostAsJsonAsync(WorldsEndpoint, new { width = worldWidth, height = worldHeight });
-//         createWorldResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
-
-//         HttpResponseMessage getWorldsResponse = await HttpClient.GetAsync(WorldsEndpoint);
-//         getWorldsResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-
-//         List<WorldResponse> worlds = await getWorldsResponse.Content.ReadFromJsonAsync<List<WorldResponse>>();
-//         return worlds?.FirstOrDefault();
-//     }
-
-//     #endregion
-
-//     #region Response Models
-
-//     private sealed record ProblemDetails(string Title, IDictionary<string, string[]>? Errors);
-
-//     #endregion
-// }
+    #endregion
+}

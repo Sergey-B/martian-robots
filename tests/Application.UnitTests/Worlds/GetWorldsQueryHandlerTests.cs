@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 using Shouldly;
 using Xunit;
+using Application.Worlds;
 
 namespace Application.UnitTests.Worlds.Get;
 

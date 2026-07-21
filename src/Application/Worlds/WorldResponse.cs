@@ -1,4 +1,4 @@
-﻿namespace Application.Worlds.Get;
+﻿namespace Application.Worlds;
 
 /// <summary>
 /// Represents the data transfer object containing the identification and dimension metrics 

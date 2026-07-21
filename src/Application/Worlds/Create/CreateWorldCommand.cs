@@ -8,4 +8,4 @@ namespace Application.Worlds.Create;
 /// </summary>
 /// <param name="Width">The upper-right horizontal grid coordinate boundary constraint (Max 50).</param>
 /// <param name="Height">The upper-right vertical grid coordinate boundary constraint (Max 50).</param>
-public sealed record CreateWorldCommand(int Width, int Height) : ICommand<Guid>;
+public sealed record CreateWorldCommand(int Width, int Height) : ICommand<WorldResponse>;

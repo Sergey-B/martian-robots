@@ -58,7 +58,6 @@ internal sealed class SendRobotCommandHandler(
         {
             List<Scent> newScents = [.. world.Scents.Where(s => !existingScentIds.Contains(s.Id))];
             context.Scents.AddRange(newScents);
-
             await context.SaveChangesAsync(cancellationToken);
         }
 

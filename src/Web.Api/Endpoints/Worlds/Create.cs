@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Worlds;
 using Application.Worlds.Create;
+using Application.Worlds.Get;
 using Domain.Worlds;
 using SharedKernel;
 using Web.Api.Extensions;
@@ -28,14 +30,14 @@ internal sealed class Create : IEndpoint
     {
         app.MapPost("worlds", async (
             CreateWorldRequest request,
-            ICommandHandler<CreateWorldCommand, Guid> handler,
+            ICommandHandler<CreateWorldCommand, WorldResponse> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new CreateWorldCommand(request.Width, request.Height);
             
-            Result<Guid> result = await handler.Handle(command, cancellationToken);
+            Result<WorldResponse> result = await handler.Handle(command, cancellationToken);
 
-            return result.Match(Results.Created, CustomResults.Problem);
+            return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.Worlds);
     }
